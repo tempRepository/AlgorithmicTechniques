@@ -14,16 +14,17 @@ public class MillerRabin {
                 powerIterator++;
             }
         }
-        double d = (double) number / Math.pow(2, maxPowerOf2);
+        int d = (int) ((double) number / Math.pow(2, maxPowerOf2));
         Random rand = new Random();
         for (int k = 0; k < precision; k++) {
             int randomNumber = 1;
             while (randomNumber <= 1 || randomNumber >= number) {
                 randomNumber = rand.nextInt(number);
             }
-            if (Math.pow(randomNumber, d) % number != 1) {
+            if (QuickExponentiation.pow(randomNumber, d, number) != 1) {
                 for (int r = 0; r <= maxPowerOf2 - 1; r++) {
-                    if (Math.pow(randomNumber, d * Math.pow(2, r)) % number != number - 1) {
+                    if (QuickExponentiation.pow(randomNumber,
+                            (int) (d * Math.pow(2, r)), number) != number - 1) {
                         return true;
                     }
                 }
@@ -34,7 +35,7 @@ public class MillerRabin {
     }
 
     public static void main(String[] args) {
-        System.out.println(MillerRabin.isPrime(97, 10));
+        System.out.println(MillerRabin.isPrime(98, 10));
     }
 
 }
