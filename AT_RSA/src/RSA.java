@@ -18,40 +18,48 @@ public class RSA {
             String tempString = Integer.toBinaryString(p);
             temp.append(tempString.substring(0, tempString.length() - 1));
             temp.append("1");
+
             // System.out.println("Result:  ->"+temp);
             Long decimal = Long.parseLong(temp.toString(), 2);
             p = decimal.intValue();
+       /*     if (mode == 1) {
+                p = (int) (Long.parseLong(Integer.toBinaryString(p)
+                        .replaceFirst("0", "1"), 2));
+            }*/
+
         } while (MillerRabin.isPrime(p, 10));
         return p;
     }
 
     public static void main(String[] args) {
 
-        Integer p = generateBigPrime();
-        Integer temp = generateBigPrime();
-        // switching second most important bit for more diversity between p and q
+        Integer p = 13;
+         //generateBigPrime();
+        Integer q = 11;
+        //generateBigPrime();
+/*        // switching second most important bit for more diversity between p and
+        // q
         Integer q = (int) (Long.parseLong(Integer.toBinaryString(temp)
-                .replaceFirst("0", "1"), 2));
+                .replaceFirst("0", "1"), 2));*/
         Integer phi = (p - 1) * (q - 1);
         Integer n = p * q;
-        int[] candidatesForE={3, 5, 17, 257};
-        boolean appropriateE=false;
-        int candidatesIterator=0;
-        int e=-1;
-        //checking if e is smaller than phi!!!
-        while(!appropriateE)
-        {
-            if (candidatesIterator<candidatesForE.length) {
-                e=candidatesForE[candidatesIterator];
+        int[] candidatesForE = { 3, 5, 17, 257 };
+        boolean appropriateE = false;
+        int candidatesIterator = 0;
+        int e = -1;
+        // checking if e is smaller than phi!!!
+        while (!appropriateE) {
+            if (candidatesIterator < candidatesForE.length) {
+                e = candidatesForE[candidatesIterator];
                 candidatesIterator++;
             } else {
-                e=e+2;
+                e = e + 2;
             }
-            if (GCD.simpleGCD(e, phi)==1) {
-                appropriateE=true;
+            if (GCD.simpleGCD(e, phi) == 1) {
+                appropriateE = true;
             }
         }
-        System.out.println("e="+e+" phi="+phi);
+        System.out.println("e=" + e + " phi=" + phi);
     }
 
 }
