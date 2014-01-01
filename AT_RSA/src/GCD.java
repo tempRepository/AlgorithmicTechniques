@@ -4,12 +4,12 @@ public class GCD {
      * @param args
      */
 
-    public static int simpleGCD(int a, int b) {
-        int t;
+    public static long simpleGCD(long a, long phi) {
+        long t;
 
-        while (b != 0) {
-            t = b;
-            b = a % b;
+        while (phi != 0) {
+            t = phi;
+            phi = a % phi;
             a = t;
         }
 
@@ -41,21 +41,21 @@ public class GCD {
         return p1;
     }
 
-    public static int modularInversion(int a, int n) {
-        int t = 0;
-        int newt = 1;
-        int r = n;
-        int newr = a;
-        int quotient;
+    public static long modularInversion(long a, long n) {
+        long t = 0;
+        long newt = 1;
+        long r = n;
+        long newr = a;
+        long quotient;
         while (newr != 0) {
             quotient = r / newr;
-            int tTemp=t;
-            int newtTemp=newt;
+            long tTemp=t;
+            long newtTemp=newt;
             t = newtTemp;
             newt = tTemp - quotient * newtTemp;
           
-            int rTemp=r;
-            int newrTemp=newr;
+            long rTemp=r;
+            long newrTemp=newr;
             r = newrTemp;
             newr = rTemp - quotient * newrTemp;
         }

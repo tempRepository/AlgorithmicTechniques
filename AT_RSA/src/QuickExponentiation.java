@@ -1,12 +1,12 @@
 
 public class QuickExponentiation {
-   public static double pow(int a, Integer b, int n)
+   public static double pow(long dateToEncrypt, long e, long n)
    {
-       String bits=Integer.toBinaryString(b);
+       String bits=Long.toBinaryString(e);
        int m=bits.length();
-       a= a%n;
+       dateToEncrypt= dateToEncrypt%n;
        double result=1;
-       int x=a;
+       long x=dateToEncrypt;
        for (int i = m-1; i >-1; i--) {
         if (bits.charAt(i)=='1') {
             result=result*x;

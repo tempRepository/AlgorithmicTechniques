@@ -33,11 +33,21 @@ public class RSA {
         return p;
     }
 
+    public static long decrypt(long encryptedData, long d, long n) {
+        return (long) (QuickExponentiation.pow(encryptedData, d, n));
+    }
+
+    public static long encrypt(long dateToEncrypt, long e, long n) {
+
+       return (long) QuickExponentiation.pow(dateToEncrypt, e, n);
+    
+    }
+
     private static Integer generatePrime() {
         Random rand = new Random();
         Integer p = 2;
         do {
-            p = rand.nextInt((int) Math.pow(2, 15));
+            p = rand.nextInt((int) Math.pow(2, 8));
 
         } while (!MillerRabin.isPrime(p, 1000000));
         return p;
@@ -45,50 +55,56 @@ public class RSA {
 
     public static void main(String[] args) {
 
-       int p = generatePrime();
-        int q = generatePrime();
-        
-      //  int p = 13;
-      //  int q = 11;
-        
-        int phi =((p - 1) * (q - 1));
-        if (phi<0) {
+        /*
+         * int p = generatePrime(); int q = generatePrime();
+         */
+
+        int p = 13;
+        int q = 11;
+
+        long phi = ((p - 1) * (q - 1));
+        if (phi < 0) {
             System.out.println("Phi is smaller than 0!ERROR!");
         }
-        Integer n = (int) (p * q);
+        long n = (int) (p * q);
         boolean appropriateE = false;
-        int iterator=0;
-        int[] eCandidates={3,5,17,257};
-        int e =3;
-        
+        int iterator = 0;
+        int[] eCandidates = { 3, 5, 17, 257 };
+        int e = 3;
+
         while (!appropriateE) {
-           // System.out.println(e);
-            if (iterator<eCandidates.length) {
-                e=eCandidates[iterator];
+            // System.out.println(e);
+            if (iterator < eCandidates.length) {
+                e = eCandidates[iterator];
                 iterator++;
             } else {
-                e=e+2;
+                e = e + 2;
             }
-            
+
             if (e < n && GCD.simpleGCD(e, phi) == 1) {
                 appropriateE = true;
             } else {
-               // e =(int)Math.pow(2, Math.pow(2, iterator))+1;
-                e+=2;
+                // e =(int)Math.pow(2, Math.pow(2, iterator))+1;
+                e += 2;
                 iterator++;
             }
-            
-            if (e>n) {
+
+            if (e > n) {
                 System.out.println("ERROR");
                 break;
             }
 
         }
         System.out.println("p=" + p + " q=" + q);
-        System.out.println("e=" + e + " phi=" + phi);
-       // d × e  mod Ø = 1
-        int d=GCD.modularInversion(e, phi)%phi;
-        System.out.println("d= "+d);
+        System.out.println("e=" + e + " phi=" + phi + " n= " + n);
+        // d × e mod Ø = 1
+        long d = GCD.modularInversion(e, phi) % phi;
+        System.out.println("d= " + d);
+        int data = 13;
+        long encryptedData = RSA.encrypt(data, e, n);
+        System.out.println("Encrypted 13: " + encryptedData);
+        System.out.println("Decrypted :" + RSA.decrypt(encryptedData, d, n));
+
     }
 
 }
