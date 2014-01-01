@@ -4,8 +4,8 @@ import java.util.Random;
 public class MillerRabin {
 
     
-    public static Boolean isPrime(int number, int precision) {
-        BigInteger bigInteger=BigInteger.valueOf(number);
+    public static Boolean isPrime(long p, int precision) {
+        BigInteger bigInteger=BigInteger.valueOf(p);
         return bigInteger.isProbablePrime(precision);
     }
     
