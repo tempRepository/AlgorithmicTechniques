@@ -39,8 +39,8 @@ public class RSA {
 
     public static long encrypt(long dateToEncrypt, long e, long n) {
 
-       return (long) QuickExponentiation.pow(dateToEncrypt, e, n);
-    
+        return (long) QuickExponentiation.pow(dateToEncrypt, e, n);
+
     }
 
     private static Integer generatePrime() {
@@ -55,12 +55,12 @@ public class RSA {
 
     public static void main(String[] args) {
 
-        /*
-         * int p = generatePrime(); int q = generatePrime();
-         */
+        int p = generatePrime();
+        int q = generatePrime();
 
-        int p = 13;
-        int q = 11;
+        /*
+         * int p = 13; int q = 11;
+         */
 
         long phi = ((p - 1) * (q - 1));
         if (phi < 0) {
