@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,7 +13,7 @@ public class RSA {
 
     private static BigInteger generateBigPrime() {
         Random rand = new Random();
-        BigInteger p =new BigInteger("0", 10);
+        BigInteger p = new BigInteger("0", 10);
         do {
             StringBuilder tempBits = new StringBuilder("1");
             for (int i = 0; i < 30; i++) {
@@ -28,10 +29,10 @@ public class RSA {
         return p;
 
     }
-    
+
     private static BigInteger generateBigPrime(BigInteger differentFrom) {
         Random rand = new Random();
-        BigInteger p =new BigInteger("0", 10);
+        BigInteger p = new BigInteger("0", 10);
         do {
             StringBuilder tempBits = new StringBuilder("1");
             for (int i = 0; i < 30; i++) {
@@ -48,47 +49,54 @@ public class RSA {
 
     }
 
-    public static BigInteger decrypt(BigInteger encryptedData, BigInteger d, BigInteger n) {
-        BigInteger result=QuickExponentiation.pow(encryptedData, d, n);
+    public static BigInteger decrypt(BigInteger encryptedData, BigInteger d,
+            BigInteger n) {
+        BigInteger result = QuickExponentiation.pow(encryptedData, d, n);
         return result;
     }
 
-    public static BigInteger encrypt(BigInteger dateToEncrypt, BigInteger e, BigInteger n) {
+    public static BigInteger encrypt(BigInteger dateToEncrypt, BigInteger e,
+            BigInteger n) {
 
-        BigInteger result=QuickExponentiation.pow(dateToEncrypt, e, n);
-        return  result;
+        BigInteger result = QuickExponentiation.pow(dateToEncrypt, e, n);
+        return result;
 
     }
 
     private static BigInteger generatePrime() {
         Random rand = new Random();
-        BigInteger p =new BigInteger("0", 10);
+        BigInteger p = new BigInteger("0", 10);
         do {
-            p =new BigInteger(String.valueOf(rand.nextInt((int) Math.pow(2, 6))), 10);
+            p = new BigInteger(
+                    String.valueOf(rand.nextInt((int) Math.pow(2, 6))), 10);
 
         } while (!MillerRabin.isPrime(p, 100000000));
         return p;
     }
 
     public static void saveKeysToFile() {
-        BigInteger p = generateBigPrime();
-        BigInteger q = generateBigPrime(p);
-
         
-     /*    BigInteger p = new BigInteger("13", 10); BigInteger q = new BigInteger("11", 10);*/
+      /*    BigInteger p = generateBigPrime();
+          BigInteger q = generateBigPrime(p);*/
          
-  
+
+          BigInteger p = new BigInteger("13", 10);
+          BigInteger q = new BigInteger("11", 10);
+
         BigInteger pMinus1 = p.subtract(new BigInteger("1", 10));
-        BigInteger qMinus1=q.subtract(new BigInteger("1", 10));
-       BigInteger phi = pMinus1.multiply(qMinus1);
-        if (phi.compareTo(new BigInteger("0", 10))<0) {
+        BigInteger qMinus1 = q.subtract(new BigInteger("1", 10));
+        BigInteger phi = pMinus1.multiply(qMinus1);
+        if (phi.compareTo(new BigInteger("0", 10)) < 0) {
             System.out.println("Phi is smaller than 0!ERROR!");
         }
-       /* long n = (int) (p * q);*/
-        BigInteger n=(new BigInteger(p.toString(), 10)).multiply((new BigInteger(q.toString(), 10)));
+        /* long n = (int) (p * q); */
+        BigInteger n = (new BigInteger(p.toString(), 10))
+                .multiply((new BigInteger(q.toString(), 10)));
         boolean appropriateE = false;
         int iterator = 0;
-        BigInteger[] eCandidates = { new BigInteger("3",10), new BigInteger("5", 10), new BigInteger("17", 10), new BigInteger("257", 10) };
+        BigInteger[] eCandidates = { new BigInteger("3", 10),
+                new BigInteger("5", 10), new BigInteger("17", 10),
+                new BigInteger("257", 10) };
         BigInteger e = new BigInteger("3", 10);
 
         while (!appropriateE) {
@@ -100,7 +108,8 @@ public class RSA {
                 e = e.add(new BigInteger("2", 10));
             }
 
-            if (new BigInteger(e.toString(), 10).compareTo(n)<0 && GCD.simpleGCD(e, phi).equals(new BigInteger("1", 10))) {
+            if (new BigInteger(e.toString(), 10).compareTo(n) < 0
+                    && GCD.simpleGCD(e, phi).equals(new BigInteger("1", 10))) {
                 appropriateE = true;
             } else {
                 // e =(int)Math.pow(2, Math.pow(2, iterator))+1;
@@ -108,7 +117,7 @@ public class RSA {
                 iterator++;
             }
 
-            if (new BigInteger(e.toString(), 10).compareTo(n)>0) {
+            if (new BigInteger(e.toString(), 10).compareTo(n) > 0) {
                 System.out.println("ERROR");
                 break;
             }
@@ -135,10 +144,20 @@ public class RSA {
             out.println(n);
             out.close();
         } catch (FileNotFoundException exception) {
-            // TODO Auto-generated catch block
+
             exception.printStackTrace();
         }
 
+    }
+
+    public static void createSignature(String fileName, BigInteger e,
+            BigInteger n) throws FileNotFoundException {
+        String myText = Signature.loadText(fileName);
+        int fileHash = Signature.computeHash(myText, n);
+        PrintWriter out = new PrintWriter("signature.txt");
+        out.print(RSA.encrypt(new BigInteger(Integer.valueOf(fileHash)
+                .toString()), e, n));
+        out.close();
     }
 
     public static void encryptFile(String fileName) throws IOException {
@@ -160,7 +179,7 @@ public class RSA {
             while (!line.equals(new BigInteger("-1", 10))) {
 
                 line = new BigInteger(String.valueOf(br.read()), 10);
-                if (!line.equals(new BigInteger("-1", 10))) {
+                if (!line.equals(new BigInteger("-1", 10)) ){//&& !line.equals(new BigInteger("10", 10))) {
                     String temp = (RSA.encrypt(line, e, n)).toString() + "|";
                     out.write(String.valueOf(RSA.encrypt(line, e, n)) + "|");
                 }
@@ -170,41 +189,62 @@ public class RSA {
             br.close();
             out.close();
         }
+
+        createSignature(fileName, e, n);
     }
 
     public static void decryptFile() throws NumberFormatException, IOException {
         BufferedReader br = new BufferedReader(
                 new FileReader("private_key.txt"));
-        BigInteger d , n;
+        BigInteger d, n;
         d = new BigInteger(br.readLine(), 10);
         n = new BigInteger(br.readLine(), 10);
         br.close();
 
         Scanner scanner = new Scanner(new File("encrypted.txt"));
-       scanner.useDelimiter("|");
+        scanner.useDelimiter("|");
         PrintWriter out;
         out = new PrintWriter("decrypted.txt");
-      
+
         while (scanner.hasNext()) {
             String temp = " ";
             StringBuilder readNumber = new StringBuilder();
             while (!temp.equals("|") && scanner.hasNext()) {
-                temp=scanner.next();
+                temp = scanner.next();
                 if (!temp.equals("|")) {
                     readNumber.append(temp);
                 } else {
-                    out.print((char) (RSA.decrypt(new BigInteger(readNumber.toString(), 10), d, n).intValue() ));
+                    out.print((char) (RSA.decrypt(
+                            new BigInteger(readNumber.toString(), 10), d, n)
+                            .intValue()));
                 }
-                
+
             }
 
         }
         out.close();
+
+        // signature checking
+        String myText = new Scanner(new File("decrypted.txt")).useDelimiter(
+                "\\A").next();
+        int computedSignature = Signature.computeHash(myText, n);
+        Integer encodedSignature = Integer.valueOf((new Scanner(new File(
+                "signature.txt")).useDelimiter("\\A").next()).replaceAll("\\n",
+                ""));
+        int decodedSignature = RSA.decrypt(
+                new BigInteger(encodedSignature.toString(), 10), d, n)
+                .intValue();
+        if (computedSignature == decodedSignature) {
+            System.out.println("Signature is valid!");
+        } else {
+            System.out.println("Signature is invalid");
+        }
+
     }
 
     public static void main(String[] args) throws IOException {
         saveKeysToFile();
-         encryptFile("data.txt");
+        encryptFile("data.txt");
         decryptFile();
 
     }
