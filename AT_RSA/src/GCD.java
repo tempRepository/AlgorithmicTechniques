@@ -1,16 +1,18 @@
+import java.math.BigInteger;
+
 public class GCD {
 
     /**
      * @param args
      */
 
-    public static long simpleGCD(long a, long phi) {
-        long t;
+    public static BigInteger simpleGCD(BigInteger a, BigInteger phi) {
+        BigInteger t;
 
-        while (phi != 0) {
-            t = phi;
-            phi = a % phi;
-            a = t;
+        while (!phi.equals(new BigInteger("0"))) {
+            t = new BigInteger(phi.toString());
+            phi = a.mod(phi);
+            a = new BigInteger(t.toString());
         }
 
         return a;
@@ -41,29 +43,29 @@ public class GCD {
         return p1;
     }
 
-    public static long modularInversion(long a, long n) {
-        long t = 0;
-        long newt = 1;
-        long r = n;
-        long newr = a;
-        long quotient;
-        while (newr != 0) {
-            quotient = r / newr;
-            long tTemp=t;
-            long newtTemp=newt;
-            t = newtTemp;
-            newt = tTemp - quotient * newtTemp;
+    public static BigInteger modularInversion(BigInteger a, BigInteger n) {
+        BigInteger t = new BigInteger("0");
+        BigInteger newt = new BigInteger("1");
+        BigInteger r = new BigInteger(n.toString());
+        BigInteger newr = new BigInteger(a.toString());
+        BigInteger quotient;
+        while (!newr.equals(new BigInteger("0"))) {
+            quotient = r.divide(newr);
+            BigInteger tTemp=new BigInteger(t.toString());
+            BigInteger newtTemp=new BigInteger(newt.toString());
+            t = new BigInteger(newtTemp.toString());
+            newt = tTemp.subtract(quotient.multiply(newtTemp));
           
-            long rTemp=r;
-            long newrTemp=newr;
-            r = newrTemp;
-            newr = rTemp - quotient * newrTemp;
+            BigInteger rTemp=new BigInteger(r.toString());
+            BigInteger newrTemp=new BigInteger(newr.toString());
+            r = new BigInteger(newrTemp.toString());
+            newr = rTemp.subtract(quotient.multiply(newrTemp));
         }
-        if (r > 1) {
-            return -1;
+        if (r.compareTo(new BigInteger("1")) > 1) {
+            return new BigInteger("-1");
         }
-        if (t < 0) {
-            t = t + n;
+        if (t.compareTo(new BigInteger("0")) < 0) {
+            t = t.add(n);
         }
         return t;
     }

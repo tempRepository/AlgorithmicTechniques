@@ -10,12 +10,12 @@ import java.util.Scanner;
 
 public class RSA {
 
-    private static long generateBigPrime() {
+    private static BigInteger generateBigPrime() {
         Random rand = new Random();
-        long p = 0;
+        BigInteger p =new BigInteger("0", 10);
         do {
             StringBuilder tempBits = new StringBuilder("1");
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 30; i++) {
                 if (rand.nextBoolean()) {
                     tempBits.append("1");
                 } else {
@@ -23,49 +23,73 @@ public class RSA {
                 }
             }
             tempBits.append("1");
-            p = Long.parseLong(tempBits.toString(), 2);
+            p = new BigInteger(tempBits.toString(), 2);
         } while (!MillerRabin.isPrime(p, 100000000));
         return p;
 
     }
-
-    public static long decrypt(long encryptedData, long d, long n) {
-        return (long) (QuickExponentiation.pow(encryptedData, d, n));
-    }
-
-    public static long encrypt(long dateToEncrypt, long e, long n) {
-
-        return (long) QuickExponentiation.pow(dateToEncrypt, e, n);
-
-    }
-
-    private static int generatePrime() {
+    
+    private static BigInteger generateBigPrime(BigInteger differentFrom) {
         Random rand = new Random();
-        int p = 2;
+        BigInteger p =new BigInteger("0", 10);
         do {
-            p = rand.nextInt((int) Math.pow(2, 6));
+            StringBuilder tempBits = new StringBuilder("1");
+            for (int i = 0; i < 30; i++) {
+                if (rand.nextBoolean()) {
+                    tempBits.append("1");
+                } else {
+                    tempBits.append("0");
+                }
+            }
+            tempBits.append("1");
+            p = new BigInteger(tempBits.toString(), 2);
+        } while (!MillerRabin.isPrime(p, 100000000) || p.equals(differentFrom));
+        return p;
+
+    }
+
+    public static BigInteger decrypt(BigInteger encryptedData, BigInteger d, BigInteger n) {
+        BigInteger result=QuickExponentiation.pow(encryptedData, d, n);
+        return result;
+    }
+
+    public static BigInteger encrypt(BigInteger dateToEncrypt, BigInteger e, BigInteger n) {
+
+        BigInteger result=QuickExponentiation.pow(dateToEncrypt, e, n);
+        return  result;
+
+    }
+
+    private static BigInteger generatePrime() {
+        Random rand = new Random();
+        BigInteger p =new BigInteger("0", 10);
+        do {
+            p =new BigInteger(String.valueOf(rand.nextInt((int) Math.pow(2, 6))), 10);
 
         } while (!MillerRabin.isPrime(p, 100000000));
         return p;
     }
 
     public static void saveKeysToFile() {
-        long p = generateBigPrime();
-        long q = generateBigPrime();
+        BigInteger p = generateBigPrime();
+        BigInteger q = generateBigPrime(p);
 
-        /*
-         * int p = 13; int q = 11;
-         */
-
-        long phi = ((p - 1) * (q - 1));
-        if (phi < 0) {
+        
+     /*    BigInteger p = new BigInteger("13", 10); BigInteger q = new BigInteger("11", 10);*/
+         
+  
+        BigInteger pMinus1 = p.subtract(new BigInteger("1", 10));
+        BigInteger qMinus1=q.subtract(new BigInteger("1", 10));
+       BigInteger phi = pMinus1.multiply(qMinus1);
+        if (phi.compareTo(new BigInteger("0", 10))<0) {
             System.out.println("Phi is smaller than 0!ERROR!");
         }
-        long n = (int) (p * q);
+       /* long n = (int) (p * q);*/
+        BigInteger n=(new BigInteger(p.toString(), 10)).multiply((new BigInteger(q.toString(), 10)));
         boolean appropriateE = false;
         int iterator = 0;
-        int[] eCandidates = { 3, 5, 17, 257 };
-        int e = 3;
+        BigInteger[] eCandidates = { new BigInteger("3",10), new BigInteger("5", 10), new BigInteger("17", 10), new BigInteger("257", 10) };
+        BigInteger e = new BigInteger("3", 10);
 
         while (!appropriateE) {
             // System.out.println(e);
@@ -73,18 +97,18 @@ public class RSA {
                 e = eCandidates[iterator];
                 iterator++;
             } else {
-                e = e + 2;
+                e = e.add(new BigInteger("2", 10));
             }
 
-            if (e < n && GCD.simpleGCD(e, phi) == 1) {
+            if (new BigInteger(e.toString(), 10).compareTo(n)<0 && GCD.simpleGCD(e, phi).equals(new BigInteger("1", 10))) {
                 appropriateE = true;
             } else {
                 // e =(int)Math.pow(2, Math.pow(2, iterator))+1;
-                e += 2;
+                e = e.add(new BigInteger("2", 10));
                 iterator++;
             }
 
-            if (e > n) {
+            if (new BigInteger(e.toString(), 10).compareTo(n)>0) {
                 System.out.println("ERROR");
                 break;
             }
@@ -93,7 +117,7 @@ public class RSA {
         System.out.println("p=" + p + " q=" + q);
         System.out.println("e=" + e + " phi=" + phi + " n= " + n);
         // d × e mod Ø = 1
-        long d = GCD.modularInversion(e, phi) % phi;
+        BigInteger d = GCD.modularInversion(e, phi).mod(phi);
         System.out.println("d= " + d);
         // int data = 13;
         // long encryptedData = RSA.encrypt(data, e, n);
@@ -119,9 +143,10 @@ public class RSA {
 
     public static void encryptFile(String fileName) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader("public_key.txt"));
-        long e = -1, n = -1;
-        e = Long.parseLong(br.readLine());
-        n = Long.parseLong(br.readLine());
+        BigInteger e;
+        BigInteger n;
+        e = new BigInteger(br.readLine(), 10);
+        n = new BigInteger(br.readLine(), 10);
 
         br.close();
 
@@ -130,13 +155,13 @@ public class RSA {
         out = new PrintWriter("encrypted.txt");
         try {
 
-            Long line = new Long(br.read());
+            BigInteger line = new BigInteger("0", 10);
 
-            while (line != -1) {
+            while (!line.equals(new BigInteger("-1", 10))) {
 
-                line = new Long(br.read());
-                if (line != -1) {
-                    String temp = String.valueOf(RSA.encrypt(line, e, n)) + "|";
+                line = new BigInteger(String.valueOf(br.read()), 10);
+                if (!line.equals(new BigInteger("-1", 10))) {
+                    String temp = (RSA.encrypt(line, e, n)).toString() + "|";
                     out.write(String.valueOf(RSA.encrypt(line, e, n)) + "|");
                 }
             }
@@ -150,9 +175,9 @@ public class RSA {
     public static void decryptFile() throws NumberFormatException, IOException {
         BufferedReader br = new BufferedReader(
                 new FileReader("private_key.txt"));
-        long d = -1, n = -1;
-        d = Long.parseLong(br.readLine());
-        n = Long.parseLong(br.readLine());
+        BigInteger d , n;
+        d = new BigInteger(br.readLine(), 10);
+        n = new BigInteger(br.readLine(), 10);
         br.close();
 
         Scanner scanner = new Scanner(new File("encrypted.txt"));
@@ -168,8 +193,7 @@ public class RSA {
                 if (!temp.equals("|")) {
                     readNumber.append(temp);
                 } else {
-                    out.print((char) RSA.decrypt(
-                            Long.parseLong(readNumber.toString()), d, n));
+                    out.print((char) (RSA.decrypt(new BigInteger(readNumber.toString(), 10), d, n).intValue() ));
                 }
                 
             }
