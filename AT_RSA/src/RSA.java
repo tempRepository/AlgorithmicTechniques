@@ -75,13 +75,12 @@ public class RSA {
     }
 
     public static void saveKeysToFile() {
-        
-      /*    BigInteger p = generateBigPrime();
-          BigInteger q = generateBigPrime(p);*/
-         
 
-          BigInteger p = new BigInteger("13", 10);
-          BigInteger q = new BigInteger("11", 10);
+        BigInteger p = generateBigPrime();
+        BigInteger q = generateBigPrime(p);
+
+/*        BigInteger p = new BigInteger("13", 10);
+        BigInteger q = new BigInteger("11", 10);*/
 
         BigInteger pMinus1 = p.subtract(new BigInteger("1", 10));
         BigInteger qMinus1 = q.subtract(new BigInteger("1", 10));
@@ -153,10 +152,10 @@ public class RSA {
     public static void createSignature(String fileName, BigInteger e,
             BigInteger n) throws FileNotFoundException {
         String myText = Signature.loadText(fileName);
-        int fileHash = Signature.computeHash(myText, n);
+        BigInteger fileHash = Signature.computeHash(myText, n);
+        System.out.println("First calculated signature(decoded): " + fileHash);
         PrintWriter out = new PrintWriter("signature.txt");
-        out.print(RSA.encrypt(new BigInteger(Integer.valueOf(fileHash)
-                .toString()), e, n));
+        out.print(RSA.encrypt(new BigInteger(fileHash.toString(), 10), e, n));
         out.close();
     }
 
@@ -179,7 +178,10 @@ public class RSA {
             while (!line.equals(new BigInteger("-1", 10))) {
 
                 line = new BigInteger(String.valueOf(br.read()), 10);
-                if (!line.equals(new BigInteger("-1", 10)) ){//&& !line.equals(new BigInteger("10", 10))) {
+                if (!line.equals(new BigInteger("-1", 10))) {// &&
+                                                             // !line.equals(new
+                                                             // BigInteger("10",
+                                                             // 10))) {
                     String temp = (RSA.encrypt(line, e, n)).toString() + "|";
                     out.write(String.valueOf(RSA.encrypt(line, e, n)) + "|");
                 }
@@ -227,14 +229,16 @@ public class RSA {
         // signature checking
         String myText = new Scanner(new File("decrypted.txt")).useDelimiter(
                 "\\A").next();
-        int computedSignature = Signature.computeHash(myText, n);
-        Integer encodedSignature = Integer.valueOf((new Scanner(new File(
+        BigInteger computedSignature = Signature.computeHash(myText, n);
+        System.out.println("Computed signature: " + computedSignature);
+
+        BigInteger encodedSignature = new BigInteger((new Scanner(new File(
                 "signature.txt")).useDelimiter("\\A").next()).replaceAll("\\n",
-                ""));
-        int decodedSignature = RSA.decrypt(
-                new BigInteger(encodedSignature.toString(), 10), d, n)
-                .intValue();
-        if (computedSignature == decodedSignature) {
+                ""), 10);
+        BigInteger decodedSignature = RSA.decrypt(new BigInteger(
+                encodedSignature.toString(), 10), d, n);
+
+        if (computedSignature.equals(decodedSignature)) {
             System.out.println("Signature is valid!");
         } else {
             System.out.println("Signature is invalid");

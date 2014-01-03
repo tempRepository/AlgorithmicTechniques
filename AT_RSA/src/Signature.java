@@ -30,11 +30,12 @@ public class Signature {
 
 
 
-    public static int computeHash(String myText, BigInteger modulo) {
-        int hash = 0;
+    public static BigInteger computeHash(String myText, BigInteger modulo) {
+        BigInteger hash= new BigInteger("0", 10);
         for (int i = 0; i < myText.length(); i++) {
-            hash += myText.charAt(i)*Math.pow(257, (myText.length()-1)-i);
-            hash= (new BigInteger(Integer.valueOf(hash).toString(), 10).mod(modulo)).intValue();
+            
+            hash =hash.add(new BigInteger(Long.valueOf((long)(myText.charAt(i)*Math.pow(257, (myText.length()-1)-i))).toString(), 10));
+            hash= hash.mod(modulo);
         }
         
         return hash;
