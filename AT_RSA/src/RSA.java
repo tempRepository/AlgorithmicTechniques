@@ -16,7 +16,7 @@ public class RSA {
         BigInteger p = new BigInteger("0", 10);
         do {
             StringBuilder tempBits = new StringBuilder("1");
-            for (int i = 0; i < 30; i++) {
+            for (int i = 0; i < 14; i++) {
                 if (rand.nextBoolean()) {
                     tempBits.append("1");
                 } else {
@@ -35,7 +35,7 @@ public class RSA {
         BigInteger p = new BigInteger("0", 10);
         do {
             StringBuilder tempBits = new StringBuilder("1");
-            for (int i = 0; i < 30; i++) {
+            for (int i = 0; i < 14; i++) {
                 if (rand.nextBoolean()) {
                     tempBits.append("1");
                 } else {
@@ -63,7 +63,7 @@ public class RSA {
 
     }
 
-    private static BigInteger generatePrime() {
+/*    private static BigInteger generatePrime() {
         Random rand = new Random();
         BigInteger p = new BigInteger("0", 10);
         do {
@@ -72,11 +72,11 @@ public class RSA {
 
         } while (!MillerRabin.isPrime(p, 100000000));
         return p;
-    }
+    }*/
 
     public static void saveKeysToFile() {
 
-        BigInteger p = generateBigPrime();
+       BigInteger p = generateBigPrime();
         BigInteger q = generateBigPrime(p);
 
 /*        BigInteger p = new BigInteger("13", 10);

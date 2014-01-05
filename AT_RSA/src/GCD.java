@@ -18,7 +18,7 @@ public class GCD {
         return a;
     }
 
-    public static int odwr_mod(int a, int n) {
+/*    public static int odwr_mod(int a, int n) {
         int a0, n0, p0, p1, q, r, t;
 
         p0 = 0;
@@ -41,7 +41,7 @@ public class GCD {
             r = n0 % a0;
         }
         return p1;
-    }
+    }*/
 
     public static BigInteger modularInversion(BigInteger a, BigInteger n) {
         BigInteger t = new BigInteger("0");
@@ -103,9 +103,7 @@ public class GCD {
     }
 
     public static void main(String[] args) {
-        for (int number : extendedGCD(26, 15)) {
-            System.out.println(number);
-        }
+    System.out.println(GCD.modularInversion(new BigInteger("3", 10), new BigInteger("7", 10)));
 
     }
 
