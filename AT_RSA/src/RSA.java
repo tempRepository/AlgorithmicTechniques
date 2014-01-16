@@ -63,16 +63,7 @@ public class RSA {
 
     }
 
-/*    private static BigInteger generatePrime() {
-        Random rand = new Random();
-        BigInteger p = new BigInteger("0", 10);
-        do {
-            p = new BigInteger(
-                    String.valueOf(rand.nextInt((int) Math.pow(2, 6))), 10);
 
-        } while (!MillerRabin.isPrime(p, 100000000));
-        return p;
-    }*/
 
     public static void saveKeysToFile() {
 
@@ -99,7 +90,6 @@ public class RSA {
         BigInteger e = new BigInteger("3", 10);
 
         while (!appropriateE) {
-            // System.out.println(e);
             if (iterator < eCandidates.length) {
                 e = eCandidates[iterator];
                 iterator++;
@@ -111,7 +101,6 @@ public class RSA {
                     && GCD.simpleGCD(e, phi).equals(new BigInteger("1", 10))) {
                 appropriateE = true;
             } else {
-                // e =(int)Math.pow(2, Math.pow(2, iterator))+1;
                 e = e.add(new BigInteger("2", 10));
                 iterator++;
             }
@@ -124,13 +113,8 @@ public class RSA {
         }
         System.out.println("p=" + p + " q=" + q);
         System.out.println("e=" + e + " phi=" + phi + " n= " + n);
-        // d × e mod Ø = 1
         BigInteger d = GCD.modularInversion(e, phi).mod(phi);
         System.out.println("d= " + d);
-        // int data = 13;
-        // long encryptedData = RSA.encrypt(data, e, n);
-        // System.out.println("Encrypted 13: " + encryptedData);
-        // System.out.println("Decrypted :" + RSA.decrypt(encryptedData, d, n));
 
         PrintWriter out;
         try {

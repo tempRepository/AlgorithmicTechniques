@@ -8,29 +8,11 @@ import java.util.Scanner;
 
 public class Signature {
     public static String loadText(String name) throws FileNotFoundException {
- /*       Scanner in = null;
-        String temp = "";
-
-        try {
-            in = new Scanner(new FileReader(name));
-            while (in.hasNextLine()) {
-                temp += in.nextLine();
-            }
-            in.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return temp;*/
-        
-        return new Scanner(new File(name)).useDelimiter(
+return new Scanner(new File(name)).useDelimiter(
                 "\\A").next();
     }
 
-
-
-    public static BigInteger computeHash(String myText, BigInteger modulo) {
+public static BigInteger computeHash(String myText, BigInteger modulo) {
         BigInteger hash= new BigInteger("0", 10);
         for (int i = 0; i < myText.length(); i++) {
             
