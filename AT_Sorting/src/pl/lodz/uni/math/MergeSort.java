@@ -56,10 +56,18 @@ public class MergeSort {
     }
 
     public static void main(String[] args) {
-        int[] numbersToSort = { 2, 7, 4489, 23, 7, 7, 8, 3, 45, 2, 10 };
-        int[] result = MergeSort.sort(numbersToSort);
-        for (int i : result) {
-            System.out.println(i);
+       
+        int[] result = null;
+        long runningTimeSum=0;
+        for (int i = 0; i < 100000; i++) {
+            int[] numbersToSort = ExamplesGenerator.generateExamples(100);
+            TimeCounter.start();
+            result = MergeSort.sort(numbersToSort);
+            runningTimeSum+=TimeCounter.stopTime();
         }
+        System.out.println("Average time: "+runningTimeSum/100000);
+       /* for (int i : result) {
+            System.out.println(i);
+        }*/
     }
 }
