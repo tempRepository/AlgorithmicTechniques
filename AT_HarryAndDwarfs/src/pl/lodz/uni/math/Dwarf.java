@@ -5,6 +5,7 @@ import java.util.Random;
 public class Dwarf {
     private boolean good;
     private static Random random = new Random();
+    private Boolean fakeAnswer = null;
 
     public Dwarf(boolean good) {
         this.good = good;
@@ -19,7 +20,10 @@ public class Dwarf {
         if (good) {
             return true;
         } else {
-            return getRandomBoolean();
+            if (fakeAnswer == null) {
+                fakeAnswer = getRandomBoolean();
+            }
+            return fakeAnswer;
         }
     }
 
@@ -45,7 +49,10 @@ public class Dwarf {
         if (good) {
             return "Good";
         } else {
-            return "Bad";
+            if (fakeAnswer == null) {
+                fakeAnswer = getRandomBoolean();
+            }
+            return "Bad and I represent myself as: " + fakeAnswer;
         }
     }
 
